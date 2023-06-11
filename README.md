@@ -1,37 +1,18 @@
+Certainly! Here's an updated version of the README.md file for running the code with Alpine OS using Docker:
+
 # Data Exporter
 
-This script allows you to export tables from a PostgreSQL database to CSV files and upload them to an Amazon S3 bucket [same or different aws account]. It supports parallel processing using multiple threads to improve performance.
+This script allows you to export tables from a PostgreSQL database to CSV files and upload them to an Amazon S3 bucket. It supports parallel processing using multiple threads to improve performance.
 
 ## Prerequisites
 
-Before running the script, make sure you have the following:
-
-- Python 3 installed
-- `psycopg2` library for connecting to PostgreSQL (`pip install psycopg2`)
-- `boto3` library for interacting with Amazon S3 (`pip install boto3`)
-- YAML file (`tables.yaml`) containing the tables and columns to export
-
-Additionally, you need to set up the following environment variables:
-
-- `RDS_HOST`: PostgreSQL database host
-- `RDS_DB_PORT`: PostgreSQL database port
-- `RDS_USERNAME`: PostgreSQL database username
-- `RDS_PASSWORD`: PostgreSQL database password
-- `RDS_DBNAME`: PostgreSQL database name
-- `DESTINATION_BUCKET`: Amazon S3 bucket name for destination storage
-- `DESTINATION_ACCOUNT_ID`: AWS account ID for the destination account
-- `CROSS_ACCOUNT_ROLE_NAME`: Name of the cross-account role in the destination account
+Before running the script, make sure you have Docker installed on your system. You can download Docker from the official website: [https://www.docker.com](https://www.docker.com)
 
 ## Usage
 
-1. Clone this repository or download the script.
+1. Clone this repository or download the script and the `tables.yaml` file.
 
-2. Install the required Python libraries by running the following command:
-    ```
-    pip install psycopg2 boto3
-    ```
-
-3. Create a YAML file named `tables.yaml` and specify the tables and columns to export in the following format:
+2. Open the `tables.yaml` file and specify the tables and columns to export in the following format:
     ```yaml
     tables:
       - name: table1
@@ -49,29 +30,48 @@ Additionally, you need to set up the following environment variables:
     ```
     destination_prefix: MMYYYY/TABLE_NAME.CSV
     ```
-4. Set the required environment variables mentioned in the Prerequisites section.
 
-5. Run the script:
+3. Set the required environment variables in the Dockerfile:
+    - `RDS_HOST`: PostgreSQL database host
+    - `RDS_DB_PORT`: PostgreSQL database port
+    - `RDS_USERNAME`: PostgreSQL database username
+    - `RDS_PASSWORD`: PostgreSQL database password
+    - `RDS_DBNAME`: PostgreSQL database name
+    - `DESTINATION_BUCKET`: Amazon S3 bucket name for destination storage
+    - `DESTINATION_ACCOUNT_ID`: AWS account ID for the destination account
+    - `CROSS_ACCOUNT_ROLE_NAME`: Name of the cross-account role in the destination account
+
+4. Build the Docker image:
+    ```bash
+    docker build -t data-exporter .
     ```
-    python data_exporter.py
+
+5. Run the Docker container:
+    ```bash
+    docker run --rm data-exporter
     ```
+
+The script will run inside the Docker container, export the specified tables to CSV files, and upload them to the configured Amazon S3 bucket.
 
 ## Notes
 
-- The script uses a thread pool to process multiple tables in parallel. You can adjust the `max_workers` parameter in the `ThreadPoolExecutor` to control the number of parallel tasks.
+- The script uses the Alpine version of the official Python Docker image to minimize the image size and improve efficiency.
 
-- The script appends the exported data to CSV files. If a CSV file with the same name already exists, it will be deleted before exporting the table data.
+- The script and the `tables.yaml` file are copied into the Docker image during the build process.
 
-- The exported CSV files are uploaded to the specified Amazon S3 bucket in the destination account using assumed cross-account role credentials.
+- The required Python dependencies (`psycopg2`, `boto3`, `pyyaml`) are installed inside the Docker image.
 
-- Error handling is implemented to log any errors that occur during the export process. If an error occurs, the script will exit with a non-zero exit code.
+- Ensure that you have replaced the environment variables in the Dockerfile with the actual values specific to your PostgreSQL database and Amazon S3 bucket.
 
-- The script logs the progress and number of rows processed for each table.
+- Make sure to have proper network connectivity and access permissions to the PostgreSQL database and Amazon S3 bucket from within the Docker container.
 
-- For security reasons, make sure to restrict the access permissions to the script and the YAML file.
-
-Feel free to customize the script or YAML file based on your specific requirements.
+- For security reasons, it is recommended to restrict the access permissions to the Docker image and any sensitive configuration files.
 
 ## License
 
 This script is licensed under the [MIT License](LICENSE).
+
+For more information on using Docker, refer to the official Docker documentation: [https://docs.docker.com](https://docs.docker.com)
+
+Enjoy exporting your PostgreSQL data to CSV files and uploading them to Amazon S3 using this convenient Dockerized solution!
+    
