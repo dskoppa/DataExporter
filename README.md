@@ -45,7 +45,10 @@ Additionally, you need to set up the following environment variables:
           - column3
     destination_prefix: optional_prefix
     ```
-
+    Eg.
+    ```
+    destination_prefix: MMYYYY/TABLE_NAME.CSV
+    ```
 4. Set the required environment variables mentioned in the Prerequisites section.
 
 5. Run the script:
