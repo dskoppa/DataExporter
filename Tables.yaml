@@ -1,0 +1,11 @@
+tables:
+  - name: table1
+    columns:
+      - column1
+      - column2
+  - name: table2
+    columns:
+      - column1
+      - column2
+      - column3
+destination_prefix: optional_prefix
